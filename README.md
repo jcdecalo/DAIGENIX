@@ -1,39 +1,40 @@
-Install custom wireguard tunnel in Ubuntu 24.04.
+# Install custom wireguard tunnel in Ubuntu 24.04.
 
-Instalar tunnel wireguard sobre linux Ubuntu 24.04 (Gestor de DNS predeterminado systemd-resolved) 
-Escenario del problema: Instalar wireguard en este escenario con el script wg-quick up, a veces reporta error, pues no se reconoce el dispositivo de red a implementar, configurado a partir del fichero de configuración generado por Mullvad:
-¿Què sucedió? Repitamos los pasos recomendado por MullVad
-Paso 1: Log in as root
-rootprofile@rootprofile-MYDEVICE:~$ sudo --login [sudo] contraseña para rootprofile: #**************
-Paso 2: Se toma el control como root y nos ubicamos en el directorio /etc/wireguard/
-root@rootprofile-MYDEVICE:~# rootprofile-MYDEVICEcd /etc/wireguard/ 
-root@rootprofile-MYDEVICE:/etc/wireguard#
-Paso 3: Ejecutamos el script wg-quick up para crear el dispositivo wireguard a partir de su fichero de configuración
-root@rootprofile-MYDEVICE:/etc/wireguard# sudo WG_QUICK_USERSPACE=no WG_QUICK_UP_SUDO=1 wg-quick up es-mad-wg-201 
-[#] ip link add es-mad-wg-201 type wireguard 
-[#] wg setconf es-mad-wg-201 /dev/fd/63 
-[#] ip -4 address add 10.65.183.36/32 dev es-mad-wg-201 
-[#] ip -6 address add fc00:bbbb:bbbb:bb01::2:b723/128 dev es-mad-wg-201 
-[#] ip link set mtu 1420 up dev es-mad-wg-201
-Y al ejecutar el comando «resolvconf» del paquete gestor deb «systemd-resolved (255.4-1ubuntu8.11)»
+- **Instalar tunnel wireguard sobre linux Ubuntu 24.04 (Gestor de DNS predeterminado systemd-resolved)** 
+- <ins>Escenario del problema</ins>: *Instalar wireguard en este escenario con el script wg-quick up, a veces reporta error, pues no se reconoce el dispositivo de red a implementar, configurado a partir del fichero de configuración generado por Mullvad:
+¿Què sucedió? Repitamos los pasos recomendado por MullVad* 
+- <ins>Paso 1</ins>: Log in as root
+*rootprofile@rootprofile-MYDEVICE:~$ sudo --login [sudo] contraseña para rootprofile: *
+- <ins>Paso 2</ins>: Se toma el control como root y nos ubicamos en el directorio /etc/wireguard/
+- *root@rootprofile-MYDEVICE:~#*
+- *rootprofile-MYDEVICE:~#cd /etc/wireguard/* 
+- *root@rootprofile-MYDEVICE:/etc/wireguard:~#*
+- <ins>Paso 3</ins>: Ejecutamos el script wg-quick up para crear el dispositivo wireguard a partir de su fichero de configuración
+- *root@rootprofile-MYDEVICE:/etc/wireguard:~# sudo WG_QUICK_USERSPACE=no WG_QUICK_UP_SUDO=1 wg-quick up es-mad-wg-201* 
+- *[#] ip link add es-mad-wg-201 type wireguard*
+- *[#] wg setconf es-mad-wg-201 /dev/fd/63* 
+- *[#] ip -4 address add 10.65.183.36/32 dev es-mad-wg-201* 
+- *[#] ip -6 address add fc00:bbbb:bbbb:bb01::2:b723/128 dev es-mad-wg-201* 
+- *[#] ip link set mtu 1420 up dev es-mad-wg-201*
+- Y al ejecutar el comando «resolvconf» del paquete gestor deb «systemd-resolved (255.4-1ubuntu8.11)»
 aparece el error "No such device" y a la salida el script wg-quick up borra la interfaz registrada
 (en este es-mad-wg-201 desde su fichero homólogo de configuración)
-[#] resolvconf -a tun.es-mad-wg-201 -m 0 -x Failed to resolve interface "tun.es-mad-wg-201": No such device [#] ip link delete dev es-mad-wg-201
-Causa probable: Este error específico viene de resolvconf (alias de  resolvectl) intentando acceder al dispositivo "tun.es-mad-wg-201" pero wireguard creó el dispositivo "es-mad-wg-201" o en la resolución del dominio o el registro del dns server de Mullvad (100.64.0.55). La herramiente resolvconf es un alias de compatibilidad que es proveido por el kernel de linux para permitir la compatibilidad de comandos nativos de diferentes versiones de linux con la herramienta resolvectl del gestor systemd-resolved de Ubuntu 24.04, creando fallos durante la ejecución del comando ya que varias opciones no se implementan en Ubuntu 24.04 ya que varios paquetes quedaron depreciados al eliminarse la herramienta de resolución de dominios Openresolv de las versiones anteriores de linux, por eso este script (wg-quick up de wireguard) falla en Ubuntu 24.04 donde el gestor predeterminado de resolución de DNS es systemd-resolved y no Openresolv.
+- [#] resolvconf -a tun.es-mad-wg-201 -m 0 -x Failed to resolve interface "tun.es-mad-wg-201": No such device [#] ip link delete dev es-mad-wg-201
+- <ins>Causa probable</ins>: Este error específico viene de resolvconf (alias de  resolvectl) intentando acceder al dispositivo "tun.es-mad-wg-201" pero wireguard creó el dispositivo "es-mad-wg-201" o en la resolución del dominio o el registro del dns server de Mullvad (100.64.0.55). La herramiente resolvconf es un alias de compatibilidad que es proveido por el kernel de linux para permitir la compatibilidad de comandos nativos de diferentes versiones de linux con la herramienta resolvectl del gestor systemd-resolved de Ubuntu 24.04, creando fallos durante la ejecución del comando ya que varias opciones no se implementan en Ubuntu 24.04 ya que varios paquetes quedaron depreciados al eliminarse la herramienta de resolución de dominios Openresolv de las versiones anteriores de linux, por eso este script (wg-quick up de wireguard) falla en Ubuntu 24.04 donde el gestor predeterminado de resolución de DNS es systemd-resolved y no Openresolv.
 
 RESOLUCIÒN:
-Recomendación: No usar el script wg-quick up y en su lugar realizar el registro y el lanzamiento de la interfaz de red del tunel vpn de wireguard manualmente usando resolvectl directamente en lugar de resolvconf
+- <ins>Recomendación</ins>: *No usar el script wg-quick up y en su lugar realizar el registro y el lanzamiento de la interfaz de red del tunel vpn de wireguard manualmente usando resolvectl directamente en lugar de resolvconf*
 
-"Configuración, registro y activación manual del tunel vpn wireguard en Ubuntu 24.04 (Noble numbat)".
-Paso 1: log as root
-rootprofile@rootprofile-MYDEVICE:~$ sudo --login [sudo] contraseña para rootprofile: #**************
+- <ins>**"Configuración, registro y activación manual del tunel vpn wireguard en Ubuntu 24.04 (Noble numbat)".**</ins>
+- <ins>Paso 1</ins>: log as root
+- *rootprofile@rootprofile-MYDEVICE:~$ sudo --login [sudo] contraseña para rootprofile:*
 Previamente se mueve, desde la carpeta de descarga, el fichero de configuración de Mullvad (descargado y generado desde la pagina (https://mullvad.net/)) en la sesión del usuario autenticado correspondiente, a la carpeta /etc/wireguard. En este ejemplo usamos el fichero de configuración es-mad-wg-201.conf:
-root@rootprofile-MYDEVICE:~# mv es-mad-wg-201.conf /etc/wireguard
+- *root@rootprofile-MYDEVICE:~# mv es-mad-wg-201.conf /etc/wireguard*
 
-Paso 2: Otorgar los permisos correctos al fichero de cofiguración de manera que solo root pueda leerlo:
-root@rootprofile-MYDEVICE:~# sudo chown root:root -R /etc/wireguard && sudo chmod 600 -R /etc/wireguard
+- <ins>Paso 2</ins>: Otorgar los permisos correctos al fichero de cofiguración de manera que solo root pueda leerlo:
+- *root@rootprofile-MYDEVICE:~# sudo chown root:root -R /etc/wireguard && sudo chmod 600 -R /etc/wireguard*
 
-Paso 3: Cambiar al directorio /etc/wireguard
+- <ins>Paso 3</ins>: Cambiar al directorio /etc/wireguard
 root@rootprofile-MYDEVICE:~# cd /etc/wireguard 
 root@rootprofile-MYDEVICE:/etc/wireguard#
 
