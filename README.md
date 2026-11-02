@@ -1,6 +1,6 @@
 # Install custom wireguard tunnel in Ubuntu 24.04.
 
-- **Instalar tunnel wireguard sobre linux Ubuntu 24.04 (Gestor de DNS predeterminado systemd-resolved)** 
+- ***Instalar tunnel wireguard sobre linux Ubuntu 24.04 (Gestor de DNS predeterminado systemd-resolved)*** 
 - <ins>Escenario del problema</ins>: *Instalar wireguard en este escenario con el script wg-quick up, ***falla***, pues no se reconoce el dispositivo de red a implementar, configurado a partir del fichero de configuración generado por Mullvad:
 ¿Què sucedió? Repitamos los pasos recomendado por MullVad* 
 - <ins>Paso 1</ins>: Log in as root
