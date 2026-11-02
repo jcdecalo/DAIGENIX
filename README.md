@@ -198,20 +198,16 @@ Link 5 (es-mad-wg-201) Current Scopes: DNS Protocols: +DefaultRoute -LLMNR -mD
 - <ins>Paso 1</ins>: Ver logs del mismo:
 - *root@rootprofile-MYDEVICE:/etc/wireguard# journalctl -xe -u systemd-resolved | tail -20*
 
-Paso 2: Detener la interfaz de red de wireguard
-root@rootprofile-MYDEVICE:/etc/wireguard# ip link set mtu 1420 down dev se-got-wg-001
+- <ins>Paso 2</ins>: Detener la interfaz de red de wireguard
+- *root@rootprofile-MYDEVICE:/etc/wireguard# ip link set mtu 1420 down dev se-got-wg-001*
 
-Paso 3: Borrar la interfaz de wireguard
-root@rootprofile-MYDEVICE:/etc/wireguard# ip link delete dev se-got-wg-001
+- <ins>Paso 3</ins>: Borrar la interfaz de wireguard
+- *root@rootprofile-MYDEVICE:/etc/wireguard# ip link delete dev se-got-wg-001*
 
-Paso 4: Ver Tabla de ruteo previa del equipo para comparar luego de restaurar a la interfaz local
-root@rootprofile-MYDEVICE:/etc/wireguard# ip route show table main
+- <ins>Paso 4</ins>: Ver Tabla de ruteo previa del equipo para comparar luego de restaurar a la interfaz local
+- *root@rootprofile-MYDEVICE:/etc/wireguard# ip route show table main*
 
-Paso 5: Una vez resuelto el problema, restaurar la interfaz de wireguard repitiendo los paso del 1 al 21.
+- <ins>Paso 5</ins>: Una vez resuelto el problema, restaurar la interfaz de wireguard repitiendo los paso del 1 al 21.
 
-
-
-
-
-Paso 4: Copiar Tabla de ruteo previa del equipo para comparar luego de restaurar a la interfaz local
-root@rootprofile-MYDEVICE:/etc/wireguard# ip route show table main 
+- <ins>Paso 6</ins>: Copiar Tabla de ruteo previa del equipo para comparar luego de restaurar a la interfaz local
+- *root@rootprofile-MYDEVICE:/etc/wireguard# ip route show table main* 
